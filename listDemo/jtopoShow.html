@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="css/common.css">
+<title></title>
+
+</head>
+<body>
+	<canvas id='JtopoDemo' width="2000" height="1000" style="border: solid 1px #0000ff"></canvas>
+
+	<ul id="contextmenu" style="display:none;">    
+		<li id="basicDetail"><a>设备信息</a></li>
+		<li id="errorDetail"><a>故障信息</a></li> 
+		<li id="consoleDetail"><a>操作窗口</a></li> 
+		<li id="foldNode"><a>折叠与展开</a></li>
+		<!-- <li id="expandNode"><a>展开</a></li> -->
+	</ul>
+
+	<!-------设备信息窗口--------->
+	<div id="basicDetailDiv" style="display:none;">
+		<div><p>设备名称:<span id="device"></span></p></div>
+		<div><p>设备名称1:<span id="device1">上发生的发生</span></p></div>
+		<div><p>设备名称2:<span id="device2">污染物而微软</span></p></div>
+		<div><p>设备名称3:<span id="device3">发的发的规范井井有条</span></p></div>
+		<div><p>设备名称4:<span id="device4">32323法国让他忽然特别3dddddd</span></p></div>
+	</div>
+
+	<!-------故障信息窗口--------->
+	<div id="errorDetailDiv" style="display:none;">
+		<div><p>故障设备名称:<span id="errordevice">fdddddgdfgdfgdgfgdfgdfg</span></p></div>
+		<div><p>故障设备名称1:<span id="errordevice1">上发生的发生</span></p></div>
+		<div><p>故障设备名称2:<span id="errordevice2">污染物而微软</span></p></div>
+		<div><p>故障设备名称3:<span id="errordevice3">发的发的规范井井有条</span></p></div>
+		<div><p>故障设备名称4:<span id="errordevice4">32323法国让他忽然特别3dddddd</span></p></div>
+	</div>
+
+	<!-------操作窗口--------->
+	<div id="consoleDetailDiv" style="display:none;">
+		<div><p>操作设备Id:<span id="consoleId"></span></p></div>
+		<div><p>操作设备名称:<span id="consoledevice">fdddddgdfgdfgdgfgdfgdfg</span></p></div>
+		<div><p>操作指令:<span id="consoledevice1"><input type="text" name="postName"></span></p></div>
+		<div class="btnDirect">
+			<button type="button">设备重启</button>
+			<button type="button">设备休眠</button>
+		</div>
+		<div class="btnConsole">
+			<button type="button">保存</button>
+			<button type="button">取消</button>
+		</div>
+	</div>
+
+</body>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="jtopo-0.4.8-min.js"></script>
+<script src="js/jtopoShowData.js"></script>
+<script src="js/jtopoShow.js"></script>
+</html>

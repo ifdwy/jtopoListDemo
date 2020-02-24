@@ -1,0 +1,16 @@
+#contextmenu{
+	 position: absolute;
+	 background-color: #fff;
+}
+
+#tabDetail{
+    background-color: #fff;
+    position: absolute;
+    left: 742px;
+    top: 47px;
+}
+
+#deleteNode{
+	position: absolute;
+	background-color: #fff;
+}
