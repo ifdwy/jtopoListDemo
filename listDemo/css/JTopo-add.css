@@ -1,0 +1,15 @@
+#toolDiv{
+    position: absolute;
+    left: 30px;
+    top: 64px;
+}
+
+#deleteNode{
+	position: absolute;
+	background-color: #fff;
+}
+
+#deleteLink{
+	position: absolute;
+	background-color: #fff;
+}
