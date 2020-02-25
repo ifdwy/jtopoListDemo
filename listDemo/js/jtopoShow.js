@@ -2,7 +2,8 @@
 1. 通过jtopoShowData里的数据渲染好拓扑结构图
 2. 若有故障标志,则在拓扑结构里区分开来(动画显示当前故障节点)
 3. 右键节点出现菜单栏(查看设备基本信息, 查看故障信息, 发送指令窗口)
-4. TODO:节点可以折叠与展开
+4. 节点可以折叠与展开
+5. TODO:当所有节点布局之后超出canvas的高度的时候需处理(应自适应)-- 暂时不做
 
 **********************/
 
@@ -12,6 +13,15 @@ $(document).ready(function(){
     var scene = new JTopo.Scene(stage);//把舞台添加到画布
     scene.background = 'img/background.jpg';//画布背景
 
+    // // 不指定布局的时候，容器的布局为自动(容器边界随元素变化）
+    // var container = new JTopo.Container('边界自动变化');
+    // container.textPosition = 'Middle_Center';
+    // container.fontColor = '100,255,0';
+    // container.font = '18pt 微软雅黑';
+    // container.borderColor = '255,0,0';
+    // container.borderRadius = 30; // 圆角
+    // scene.add(container);
+
     var nodeItemArr =[]; //	记住每个根节点的id
 	var linkArr =[]; // 所有连线的数组
     var beginNode = null; // 连线的开始节点
@@ -19,7 +29,7 @@ $(document).ready(function(){
 
     //	获取到jtopoShowData里的数据dataList
     // console.log("dataList===================>", dataList)
-
+    
     var resultNodeArr=[];// 新增节点函数返回的结果
     var resultLinkArr=[];
 	for (var i = 0; i < dataList.length; i++) {
@@ -42,10 +52,18 @@ $(document).ready(function(){
 		    sNode.serializedProperties.push("hasLeaves"); 
 		    
 		    scene.add(sNode); // 放入到场景中
+		    console.log("sNode================>", sNode)
+		    // container.add(sNode); // 放入容器当中
 		    // 右键节点出现菜单选项
 		    sNode.mouseup(function(e){
 		    	rightClickMenue(e,sNode);
 		    });
+
+		  //   //	双击折叠节点
+		  //   sNode.dbclick(function(){
+				// foldNode(sNode);
+		  //   });
+
     	}else{
     		if (dataList[i].parentId == sNode.id) {//	根节点下的第一层
 	    		beginNode = sNode;
@@ -83,10 +101,16 @@ $(document).ready(function(){
 	  //   }
 	    // node.dragable = false; // 不可拖拽
 	    scene.add(node); // 放入到场景中
+	    // container.add(node); // 放入容器当中
 
 	    //	右键节点出现菜单选项
 	    node.mouseup(function(e){
 	    	rightClickMenue(e,node);
+	    })
+
+	    //	双击折叠节点
+	    node.dbclick(function(){
+			foldNode(node);
 	    })
 
 	    //	如果该节点报错则该节点变化显示(显示动画效果)
@@ -168,6 +192,62 @@ $(document).ready(function(){
 		foldOpen(currentNode);
 	});
 
+	var parentIdArr =[];
+	//	TODO: 向上递归查找当前节点的所有父节点
+	function parentArr(nodeParent){
+		parentIdArr.push(nodeParent.id);
+		if (nodeParent.parent != undefined) {
+			parentArr(nodeParent.parent);
+		}
+	}
+
+	var circleNodeArr=[];
+	function foldNode(nodeFold){
+		// console.log("找到当前节点的所有父节点=========================>", nodeFold)
+		if (nodeFold.parent != undefined) {
+			parentArr(nodeFold.parent);
+		}
+		console.log("parentIdArr======找到当前节点的所有父节点==============>", parentIdArr)
+
+		var flagNode = nodeFold;
+		foldOpen(nodeFold);
+		var circleNode = new JTopo.CircleNode('双击展开节点');
+		circleNode.radius = 14; // 半径
+		circleNode.fillColor = '10, 158, 162'; // 填充颜色
+		circleNode.setLocation(currentNode.getLocation().x, currentNode.getLocation().y);
+		circleNode.id = flagNode.id; 
+		circleNode.serializedProperties.push("id"); 
+		scene.add(circleNode); 
+		//	折叠的时候隐藏掉其他的圆形节点(只需隐藏掉同一父节点下的子节点)
+		circleNodeArr.push(circleNode); 
+		console.log("circleNodeArr===================>", circleNodeArr)
+		for (var j = 0; j < circleNodeArr.length; j++) {
+			if (circleNodeArr[j].id > flagNode.id ) {
+				circleNodeArr[j].visible = false;
+			}
+		}
+		flagNode.visible = false;
+		circleNode.dbclick(function(){
+			// 双击圆形节点的时候需判断circleNodeArr里的是否出现
+			for (var i = 0; i < circleNodeArr.length; i++) {
+				if (circleNodeArr[i].id > flagNode.id) {
+					circleNodeArr[i].visible = true;
+				}
+
+				if (circleNodeArr[i].id == circleNode.id) {
+					console.log("在数组里移除掉这个点")
+					circleNodeArr.splice(i);
+				}
+			}
+
+			console.log("circleNodeArr=======删除掉之后的圆形节点数组============>", circleNodeArr)
+			
+			circleNode.visible = false;
+			flagNode.visible = true;
+			foldOpen(flagNode);
+		})
+	}
+
 	var foldOpenStatus = {}; // 记录折叠状态
 	function foldOpen(e){ // 折叠展开
 		var thisNode = e.id; // 以当前节点id为 key
@@ -227,24 +307,6 @@ $(document).ready(function(){
 		}
 	}
 
-	// $("#expandNode").click(function(){
-	// 	console.log("当前操作的点================>", currentNode)
-	// 	//	获取当前点的下一节点 和连线
-	// 	var nodeLen =currentNode.outLinks;
-	// 	if (nodeLen.length !=0　&& nodeLen[0].visible === false) {
-	// 		for (var i = 0; i < nodeLen.length; i++) {
-	// 			nodeLen[i].nodeZ.visible = true;
-	// 			var linksLen = nodeLen[i].nodeZ.inLinks;
-	// 			if (linksLen.length != 0) {
-	// 				for (var j = 0; j < linksLen.length; j++) {
-	// 					nodeLen[i].nodeZ.inLinks[j].visible = true;
-	// 				}
-	// 			}
-
-	// 		}
-	// 	}
-	// })
-
 	//  当从右键菜单失去焦点的时候, 菜单隐藏
     $("#contextmenu").mouseleave(function(){
         $("#contextmenu").hide();
@@ -296,6 +358,5 @@ $(document).ready(function(){
     
     //	全自动布局(树形结构图)
 	scene.doLayout(JTopo.layout.TreeLayout('down', 150, 150));
-
 
 });

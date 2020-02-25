@@ -143,5 +143,69 @@ var dataList=[
 			"name": "设备10",
 			"isRoot": false,
 			"alarm": true
+		},
+		{
+			"id": 11,
+			"parentId": 9,
+			"img": "img/set11.jpg",
+			"name": "设备11",
+			"isRoot": false,
+			"alarm": true
+		},
+		{
+			"id": 12,
+			"parentId": 10,
+			"img": "img/set12.jpg",
+			"name": "设备12",
+			"isRoot": false,
+			"alarm": false
+		},
+		{
+			"id": 13,
+			"parentId": 10,
+			"img": "img/set13.jpg",
+			"name": "设备13",
+			"isRoot": false,
+			"alarm": true
+		},
+		{
+			"id": 14,
+			"parentId": 11,
+			"img": "img/set14.jpg",
+			"name": "设备14",
+			"isRoot": false,
+			"alarm": true
+		},
+		{
+			"id": 15,
+			"parentId": 11,
+			"img": "img/set15.jpg",
+			"name": "设备15",
+			"isRoot": false,
+			"alarm": false
+		},
+		{
+			"id": 16,
+			"parentId": 11,
+			"img": "img/set16.jpg",
+			"name": "设备16",
+			"isRoot": false,
+			"alarm": true
+		},
+		{
+			"id": 17,
+			"parentId": 14,
+			"img": "img/set17.jpg",
+			"name": "设备17",
+			"isRoot": false,
+			"alarm": false
+		},
+		{
+			"id": 18,
+			"parentId": 14,
+			"img": "img/set18.jpg",
+			"name": "设备18",
+			"isRoot": false,
+			"alarm": true
 		}				
 ]
