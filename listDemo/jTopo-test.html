@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="css/JTopo-test.css">
+<link rel="stylesheet" type="text/css" href="css/common.css">
+<title></title>
+
+</head>
+<body>
+	<canvas id='Jtopo'width="1000" height="1000" style="border: solid 1px #0000ff"></canvas>
+	
+	<ul id="contextmenu" style="display:none;">    
+		<li id="showDetail"><a>展示详情</a></li>
+		<li id="hideDetail"><a>隐藏详情</a></li>    
+		<li><a>更改颜色</a></li>
+		<li><a>放大</a></li>
+		<li><a>缩小</a></li>    
+		<li><a>删除该节点</a></li>
+	</ul>
+
+	<ul id="deleteNode" style="display:none;">   
+		<li id="delete"><a>删除该节点</a></li>
+	</ul>
+
+	<table border="1" id="tabDetail" style="display:none;">
+		<tr>
+		    <th>Month</th>
+		    <th>Savings</th>
+		    <th>test</th>
+		</tr>
+		<tr>
+		    <td>January</td>
+			<td>$100</td>
+			<td>Savings</td>
+		</tr>
+		<tr>
+		    <td>January</td>
+			<td>$100</td>
+			<td>Savings</td>
+		</tr>
+	</table>
+
+</body>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="jtopo-0.4.8-min.js"></script>
+<script src="JTopo-test.js"></script>
+</html>
