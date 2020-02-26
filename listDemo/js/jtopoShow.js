@@ -52,17 +52,11 @@ $(document).ready(function(){
 		    sNode.serializedProperties.push("hasLeaves"); 
 		    
 		    scene.add(sNode); // 放入到场景中
-		    console.log("sNode================>", sNode)
 		    // container.add(sNode); // 放入容器当中
 		    // 右键节点出现菜单选项
 		    sNode.mouseup(function(e){
 		    	rightClickMenue(e,sNode);
 		    });
-
-		  //   //	双击折叠节点
-		  //   sNode.dbclick(function(){
-				// foldNode(sNode);
-		  //   });
 
     	}else{
     		if (dataList[i].parentId == sNode.id) {//	根节点下的第一层
@@ -106,11 +100,6 @@ $(document).ready(function(){
 	    //	右键节点出现菜单选项
 	    node.mouseup(function(e){
 	    	rightClickMenue(e,node);
-	    })
-
-	    //	双击折叠节点
-	    node.dbclick(function(){
-			foldNode(node);
 	    })
 
 	    //	如果该节点报错则该节点变化显示(显示动画效果)
@@ -192,73 +181,18 @@ $(document).ready(function(){
 		foldOpen(currentNode);
 	});
 
-	var parentIdArr =[];
-	//	TODO: 向上递归查找当前节点的所有父节点
-	function parentArr(nodeParent){
-		parentIdArr.push(nodeParent.id);
-		if (nodeParent.parent != undefined) {
-			parentArr(nodeParent.parent);
-		}
-	}
-
-	var circleNodeArr=[];
-	function foldNode(nodeFold){
-		// console.log("找到当前节点的所有父节点=========================>", nodeFold)
-		if (nodeFold.parent != undefined) {
-			parentArr(nodeFold.parent);
-		}
-		console.log("parentIdArr======找到当前节点的所有父节点==============>", parentIdArr)
-
-		var flagNode = nodeFold;
-		foldOpen(nodeFold);
-		var circleNode = new JTopo.CircleNode('双击展开节点');
-		circleNode.radius = 14; // 半径
-		circleNode.fillColor = '10, 158, 162'; // 填充颜色
-		circleNode.setLocation(currentNode.getLocation().x, currentNode.getLocation().y);
-		circleNode.id = flagNode.id; 
-		circleNode.serializedProperties.push("id"); 
-		scene.add(circleNode); 
-		//	折叠的时候隐藏掉其他的圆形节点(只需隐藏掉同一父节点下的子节点)
-		circleNodeArr.push(circleNode); 
-		console.log("circleNodeArr===================>", circleNodeArr)
-		for (var j = 0; j < circleNodeArr.length; j++) {
-			if (circleNodeArr[j].id > flagNode.id ) {
-				circleNodeArr[j].visible = false;
-			}
-		}
-		flagNode.visible = false;
-		circleNode.dbclick(function(){
-			// 双击圆形节点的时候需判断circleNodeArr里的是否出现
-			for (var i = 0; i < circleNodeArr.length; i++) {
-				if (circleNodeArr[i].id > flagNode.id) {
-					circleNodeArr[i].visible = true;
-				}
-
-				if (circleNodeArr[i].id == circleNode.id) {
-					console.log("在数组里移除掉这个点")
-					circleNodeArr.splice(i);
-				}
-			}
-
-			console.log("circleNodeArr=======删除掉之后的圆形节点数组============>", circleNodeArr)
-			
-			circleNode.visible = false;
-			flagNode.visible = true;
-			foldOpen(flagNode);
-		})
-	}
-
 	var foldOpenStatus = {}; // 记录折叠状态
 	function foldOpen(e){ // 折叠展开
 		var thisNode = e.id; // 以当前节点id为 key
 		var tarlink = e.outLinks;
 
 		if(tarlink == undefined){
-			return
+			return ;
 		}
-	
 		if(tarlink.length != 0 && tarlink[0].visible === true){
 			var status = [];
+			//	该颜色代表可以展开
+			e.fillColor="51, 222, 15";
 			for (var i = 0; i < tarlink.length; i++){
 				status[i] = {node: tarlink[i].nodeZ.visible, link: tarlink[i].visible};
 				foldOpenStatus[thisNode] = status;
@@ -271,6 +205,8 @@ $(document).ready(function(){
 				}
 			}
 		}else if(tarlink.length != 0 && tarlink[0].visible === false){
+			//	将颜色还原
+			e.fillColor="22,124,255";
 			for (var k = 0; k < tarlink.length; k++){
 				tarlink[k].nodeZ.visible =  foldOpenStatus[thisNode][k].node;
 				tarlink[k].visible = foldOpenStatus[thisNode][k].link;

@@ -102,7 +102,7 @@ var dataList=[
 			"img": "img/set5.jpg",
 			"name": "设备5",
 			"isRoot": false,
-			"alarm": true
+			"alarm": false
 		},
 		{
 			"id": 6,
@@ -174,7 +174,7 @@ var dataList=[
 			"img": "img/set14.jpg",
 			"name": "设备14",
 			"isRoot": false,
-			"alarm": true
+			"alarm": false
 		},
 		{
 			"id": 15,
