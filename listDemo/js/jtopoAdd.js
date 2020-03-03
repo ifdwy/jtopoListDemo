@@ -33,13 +33,16 @@ $(document).ready(function(){
     //	右键菜单处理    
     var map={};
     var mapArr=[];
-    $("#contextmenu a").click(function(){
+    $("#contextmenu a").click(function(e){
         var text = $(this).text();
                 
         if(text == '添加摄像点'){
-        	var type ="摄像点";
-        	var resNode = addNode(type);
-        	resultMap(resNode);
+        	// 弹出添加摄像点的新增窗口
+        	$("#consoleDetailDiv").css({
+        		top: e.pageY,
+                left: e.pageX
+            }).show();
+
         }if(text == '添加站点'){
         	var type ="站点";
         	var resNode = addNode(type);
@@ -49,6 +52,21 @@ $(document).ready(function(){
         }
         $("#contextmenu").hide();
     });
+            
+    //	添加摄像点保存成功之后再加节点与线
+    $("#submitBtn").click(function(){
+        console.log("保存成功!");
+        $("#consoleDetailDiv").hide();
+            var type ="摄像点";
+	        var resNode = addNode(type);
+	        resultMap(resNode);
+        });
+
+    //	添加摄像点选择取消按钮
+    $("#cancelBtn").click(function(){
+        $("#consoleDetailDiv").hide();
+    })
+
 
     //	实现添加摄像点
     var count =1;

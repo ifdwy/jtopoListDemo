@@ -10,10 +10,28 @@
 	<canvas id='JtopoAdd' width="2000" height="1000" style="border: solid 1px #0000ff"></canvas>
 	<!-----右键菜单--------->
 	<ul id="contextmenu" style="display:none;">    
-		<li id="basicDetail"><a>添加摄像点</a></li>
-		<li id="errorDetail"><a>添加站点</a></li> 
-		<li id="consoleDetail"><a>添加卡口</a></li> 
+		<li id="addCamera"><a>添加摄像点</a></li>
+		<li id="addStation"><a>添加站点</a></li> 
+		<li id="add"><a>添加卡口</a></li> 
 	</ul>
+
+	<!-------操作窗口--------->
+	<div id="consoleDetailDiv" style="display:none;">
+		<div><p>操作设备Id:<span id="consoleId"></span></p></div>
+		<div><p>操作设备名称:<span id="consoledevice">fdddddgdfgdfgdgfgdfgdfg</span></p></div>
+		<div><p>操作指令:<span id="consoledevice1"><input type="text" name="postName"></span></p></div>
+		<div class="btnDirect">
+			<button type="button">设备重启</button>
+			<button type="button">设备休眠</button>
+		</div>
+		<div class="btnConsole">
+			<button type="button" id="submitBtn">保存</button>
+			<button type="button" id="cancelBtn">取消</button>
+		</div>
+	</div>
+
+
+
 
 </body>
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
