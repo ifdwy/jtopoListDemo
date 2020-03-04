@@ -4,6 +4,7 @@
 3. 右键节点出现菜单栏(查看设备基本信息, 查看故障信息, 发送指令窗口)
 4. 节点可以折叠与展开
 5. TODO:当所有节点布局之后超出canvas的高度的时候需处理(应自适应)-- 暂时不做
+6: todo: 动画效果(从起点到不同的终点)--未实现
 
 **********************/
 
@@ -243,6 +244,45 @@ $(document).ready(function(){
 		}
 	}
 
+	// 点击删除该节点
+	$("#delNode").click(function(){
+		if (currentNode.id == 1) {
+			alert("根节点不能删除!")
+		}else{
+			console.log("点击删除该节点!");
+			var outLinks =currentNode.outLinks;
+			if (outLinks.length ==0) {
+				scene.remove(currentNode);
+			}else{
+				for (var i = 0; i < outLinks.length; i++) {
+					//	判断是否还有子节点
+					if (outLinks[i].nodeZ.outLinks !=0) {
+						untilDel(outLinks[i].nodeZ.outLinks);// 有则继续向下删
+						scene.remove(outLinks[i].nodeA);
+					}else{
+						scene.remove(outLinks[i].nodeA);
+						scene.remove(outLinks[i].nodeZ);
+					}
+				}
+			}
+
+		}
+	})
+
+	// 删除该节点及该节点下的所有节点与连线
+	function untilDel(deLink){
+		for (var i = 0; i < deLink.length; i++) {
+			//	判断是否还有子节点
+			if (deLink[i].nodeZ.outLinks !=0) {
+				untilDel(deLink[i].nodeZ.outLinks);// 有则继续向下删
+				scene.remove(deLink[i].nodeA);
+			}else{
+				scene.remove(deLink[i].nodeA);
+				scene.remove(deLink[i].nodeZ);
+			}
+		}		
+	}
+
 	//  当从右键菜单失去焦点的时候, 菜单隐藏
     $("#contextmenu").mouseleave(function(){
         $("#contextmenu").hide();
@@ -291,7 +331,7 @@ $(document).ready(function(){
         	return "请勿重复连线!!";
         }
     }
-    
+
     //	全自动布局(树形结构图)
 	scene.doLayout(JTopo.layout.TreeLayout('down', 150, 150));
 
