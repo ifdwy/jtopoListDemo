@@ -4,7 +4,8 @@
 3. 右键节点出现菜单栏(查看设备基本信息, 查看故障信息, 发送指令窗口)
 4. 节点可以折叠与展开
 5. TODO:当所有节点布局之后超出canvas的高度的时候需处理(应自适应)-- 暂时不做
-6: todo: 动画效果(从起点到不同的终点)--未实现
+6: 动画效果从起点到不同的终点动画效果 (1:删除节点之后,该节点下的动画也消失; 2: 该节点被折叠后,该节点下的动画也消失)
+7: 删除节点功能,包括其下面的子节点与连线
 
 **********************/
 
@@ -14,19 +15,11 @@ $(document).ready(function(){
     var scene = new JTopo.Scene(stage);//把舞台添加到画布
     scene.background = 'img/background.jpg';//画布背景
 
-    // // 不指定布局的时候，容器的布局为自动(容器边界随元素变化）
-    // var container = new JTopo.Container('边界自动变化');
-    // container.textPosition = 'Middle_Center';
-    // container.fontColor = '100,255,0';
-    // container.font = '18pt 微软雅黑';
-    // container.borderColor = '255,0,0';
-    // container.borderRadius = 30; // 圆角
-    // scene.add(container);
-
     var nodeItemArr =[]; //	记住每个根节点的id
 	var linkArr =[]; // 所有连线的数组
     var beginNode = null; // 连线的开始节点
     var currentNode = null; // 点击当前节点出现菜单栏
+	var aniNodeArr =[];// 产生的所有动画节点
 
     //	获取到jtopoShowData里的数据dataList
     // console.log("dataList===================>", dataList)
@@ -53,7 +46,7 @@ $(document).ready(function(){
 		    sNode.serializedProperties.push("hasLeaves"); 
 		    
 		    scene.add(sNode); // 放入到场景中
-		    // container.add(sNode); // 放入容器当中
+
 		    // 右键节点出现菜单选项
 		    sNode.mouseup(function(e){
 		    	rightClickMenue(e,sNode);
@@ -63,6 +56,8 @@ $(document).ready(function(){
     		if (dataList[i].parentId == sNode.id) {//	根节点下的第一层
 	    		beginNode = sNode;
 	    		resultNodeArr.push(addNode(beginNode, dataList[i], dataList[i].alarm));
+	    		
+
 	    	}else{
 	    		for (var j = 0; j < resultNodeArr.length; j++) {
 	    			if (dataList[i].parentId == resultNodeArr[j].id) {//	根节点下的第二层及下面的层
@@ -76,8 +71,7 @@ $(document).ready(function(){
 
 	// 新增节点函数
 	function addNode(parentNode, nodeArgum, alarmFlag){
-		// console.log("nodeArgum===============>", nodeArgum)
-		var node = new JTopo.Node(nodeArgum.name);    // 创建一个节点
+		var node = new JTopo.CircleNode(nodeArgum.name);    // 创建一个节点
 	    // 为根节点添加自定义属性
 	    node.id = nodeArgum.id;   
 	    node.serializedProperties.push("id");
@@ -87,16 +81,13 @@ $(document).ready(function(){
 	    node.serializedProperties.push("deviceName"); 
 		// 为节点添加 breakdown (故障)属性
 		node.breakdown = nodeArgum.alarm;    
-		node.serializedProperties.push("breakdown");
-		node.hasLeaves = nodeArgum.hasLeaves; 
-		node.serializedProperties.push("hasLeaves"); 	    
+		node.serializedProperties.push("breakdown");	    
 	  //   if (Object.keys(nodeArgum).includes("leaves")) {
 	  //   	node.leaves = nodeArgum.leaves;    // 在创建节点的时候添加自定义属性   
 			// node.serializedProperties.push("leaves"); // 把自定义属性加入进节点的属性组 serializedProperties 中	
 	  //   }
 	    // node.dragable = false; // 不可拖拽
 	    scene.add(node); // 放入到场景中
-	    // container.add(node); // 放入容器当中
 
 	    //	右键节点出现菜单选项
 	    node.mouseup(function(e){
@@ -200,6 +191,8 @@ $(document).ready(function(){
 				tarlink[i].nodeZ.visible = false;
 				tarlink[i].visible = false;
 				
+				hideOshowAniNode(tarlink[i].nodeZ, true);
+
 				// 下一层还有节点
 				if( tarlink[i].nodeZ.outLinks.length != 0){ 
 					dbfold(tarlink[i].nodeZ.outLinks, foldOpenStatus[thisNode][i]);
@@ -211,7 +204,7 @@ $(document).ready(function(){
 			for (var k = 0; k < tarlink.length; k++){
 				tarlink[k].nodeZ.visible =  foldOpenStatus[thisNode][k].node;
 				tarlink[k].visible = foldOpenStatus[thisNode][k].link;
-
+				hideOshowAniNode(tarlink[k].nodeZ, false);
 				 // 下一层还有节点
 				if( tarlink[k].nodeZ.outLinks.length != 0){
 					dbOpen(tarlink[k].nodeZ.outLinks, foldOpenStatus[thisNode][k]);
@@ -227,6 +220,8 @@ $(document).ready(function(){
 				dblink[j].nodeZ.visible = false;
 				dblink[j].visible = false;
 
+				hideOshowAniNode(dblink[j].nodeZ, true);
+
 				if( dblink[j].nodeZ.outLinks.length != 0){ 
 					dbfold(dblink[j].nodeZ.outLinks, foldStatus.status[j]);
 				}
@@ -236,7 +231,8 @@ $(document).ready(function(){
 			for(var j = 0; j < dblink.length; j++){
 				dblink[j].nodeZ.visible = openStatus.status[j].node;
 				dblink[j].visible = openStatus.status[j].link;
-
+				hideOshowAniNode(dblink[j].nodeZ, false);
+				
 				if( dblink[j].nodeZ.outLinks.length != 0){ 
 					dbOpen(dblink[j].nodeZ.outLinks, openStatus.status[j]);
 				}
@@ -249,20 +245,21 @@ $(document).ready(function(){
 		if (currentNode.id == 1) {
 			alert("根节点不能删除!")
 		}else{
-			console.log("点击删除该节点!");
 			var outLinks =currentNode.outLinks;
 			if (outLinks.length ==0) {
 				scene.remove(currentNode);
+				updateNodeArr(currentNode);// 删除节点之后更新以前保存的数组
 			}else{
 				for (var i = 0; i < outLinks.length; i++) {
 					//	判断是否还有子节点
 					if (outLinks[i].nodeZ.outLinks !=0) {
 						untilDel(outLinks[i].nodeZ.outLinks);// 有则继续向下删
-						scene.remove(outLinks[i].nodeA);
 					}else{
-						scene.remove(outLinks[i].nodeA);
 						scene.remove(outLinks[i].nodeZ);
+						updateNodeArr(outLinks[i].nodeZ);
 					}
+					scene.remove(outLinks[i].nodeA);
+					updateNodeArr(outLinks[i].nodeA);
 				}
 			}
 
@@ -275,11 +272,13 @@ $(document).ready(function(){
 			//	判断是否还有子节点
 			if (deLink[i].nodeZ.outLinks !=0) {
 				untilDel(deLink[i].nodeZ.outLinks);// 有则继续向下删
-				scene.remove(deLink[i].nodeA);
 			}else{
-				scene.remove(deLink[i].nodeA);
 				scene.remove(deLink[i].nodeZ);
+				updateNodeArr(deLink[i].nodeZ);
+
 			}
+			scene.remove(deLink[i].nodeA);
+			updateNodeArr(deLink[i].nodeA);
 		}		
 	}
 
@@ -311,11 +310,12 @@ $(document).ready(function(){
     function linkNode(nodeA, nodeB, text, alarmLinkFlag) {
     	if (!linkArr.includes(text)) {
 		    linkArr.push(text);
-	        var link = new JTopo.FoldLink(nodeA, nodeB, text);
-	        link.arrowsRadius = 10; //箭头大小
-	        link.lineWidth = 2; // 线宽
-	        link.bundleOffset = 60; // 折线拐角处的长度
-	        link.bundleGap = 20; // 线条之间的间隔
+	        var link = new JTopo.Link(nodeA, nodeB, text);
+	        link.alpha =0.8;
+	        // link.arrowsRadius = 25; //箭头大小
+	        link.lineWidth = 10; // 线宽
+	        // link.bundleOffset = 60; // 折线拐角处的长度
+	        // link.bundleGap = 20; // 线条之间的间隔
 	        if (alarmLinkFlag == true) {
 	        	link.dashedPattern = 5;
 	        	link.strokeColor = '255, 0, 76'; // 线条颜色
@@ -325,6 +325,7 @@ $(document).ready(function(){
 	       	// 为连线添加自定义属性
 		    link.id = nodeB.id;    // 在创建节点的时候添加自定义属性   
 		    link.serializedProperties.push("id"); // 把自定义属性加入进节点的属性组 serializedProperties 中
+		    // link.visible =false;
 		    scene.add(link);
 	        return link;
         }else{
@@ -333,6 +334,52 @@ $(document).ready(function(){
     }
 
     //	全自动布局(树形结构图)
-	scene.doLayout(JTopo.layout.TreeLayout('down', 150, 150));
+	scene.doLayout(JTopo.layout.TreeLayout('right', 80, 150));
+	
+	
+	// 若有节点被删除则更新保存节点的数组
+	function updateNodeArr(del){
+		hideOshowAniNode(del, true);
+		resultNodeArr = resultNodeArr.filter(function(item){
+			return item.id != del.id;
+		})
+	}
+
+	//	隐藏当前节点产生的所有动态节点
+	function hideOshowAniNode(hideAni, hideFlag){
+		for (var i = 0; i < aniNodeArr.length; i++) {
+			if (aniNodeArr[i].id == hideAni.id) {
+				if (hideFlag) {// 隐藏
+					aniNodeArr[i].visible =false;
+				}else{// 显示
+					aniNodeArr[i].visible =true;
+				}
+			}
+		}
+	}
+	
+	// 实现开始节点到不同的终点的动画
+	animateFun(resultNodeArr);
+	function animateFun(res){
+		for (var i = 0; i < res.length; i++) {
+			if(res[i].inLinks.length !=0){
+				var inLinks = res[i].inLinks;
+				for (var j = 0; j < inLinks.length; j++) {
+					for(var c=0; c<20; c++){
+						var animateNode = new JTopo.CircleNode();
+						animateNode.id =inLinks[j].nodeZ.id;
+						animateNode.serializedProperties.push("id");
+						animateNode.radius =3;
+						animateNode.alpha =0.8;
+						animateNode.fillColor = "204, 240, 241";
+						animateNode.setLocation(inLinks[j].nodeA.getCenterLocation().x, inLinks[j].nodeA.getCenterLocation().y)
+						scene.add(animateNode);
+						JTopo.Animate.stepByStep(animateNode, {x: inLinks[j].nodeZ.getCenterLocation().x, y: inLinks[j].nodeZ.getCenterLocation().y+0.1}, 1000*c, true).start();
+						aniNodeArr.push(animateNode);
+	            	}
+				}
+			}
+		}
+	}
 
 });
