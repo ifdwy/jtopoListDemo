@@ -135,7 +135,7 @@ $(document).ready(function(){
 			// console.log("removeNode.getLocation()===================>", removeNode.getLocation())
 			//	若移动了则改变该节点原型链上位置
 			removeNode.__proto__.x =removeNode.getLocation().x;
-			removeNode.__proto__.x =removeNode.getLocation().y;
+			removeNode.__proto__.y =removeNode.getLocation().y;
 		})
 
 	}

@@ -71,7 +71,12 @@ $(document).ready(function(){
 
 	// 新增节点函数
 	function addNode(parentNode, nodeArgum, alarmFlag){
-		var node = new JTopo.CircleNode(nodeArgum.name);    // 创建一个节点
+		var node = new JTopo.Node(nodeArgum.name);    // 创建一个节点
+		node.shadow = true;
+		node.borderWidth =5;
+		node.borderRadius = 12;
+		node.borderColor ="0, 248, 255";
+		node.dragable = false;
 	    // 为根节点添加自定义属性
 	    node.id = nodeArgum.id;   
 	    node.serializedProperties.push("id");
@@ -82,28 +87,16 @@ $(document).ready(function(){
 		// 为节点添加 breakdown (故障)属性
 		node.breakdown = nodeArgum.alarm;    
 		node.serializedProperties.push("breakdown");	    
-	  //   if (Object.keys(nodeArgum).includes("leaves")) {
-	  //   	node.leaves = nodeArgum.leaves;    // 在创建节点的时候添加自定义属性   
-			// node.serializedProperties.push("leaves"); // 把自定义属性加入进节点的属性组 serializedProperties 中	
-	  //   }
-	    // node.dragable = false; // 不可拖拽
 	    scene.add(node); // 放入到场景中
+
 
 	    //	右键节点出现菜单选项
 	    node.mouseup(function(e){
 	    	rightClickMenue(e,node);
 	    })
 
-	    //	如果该节点报错则该节点变化显示(显示动画效果)
-	    // if (alarmFlag) {
-	    // 	// console.log("该节点出现故障!!")
-	    // 	node.alarm ="warning";
-	    // 	node.fillColor ='255, 0, 76';
-	    // 	JTopo.Animate.stepByStep(node, {scaleX: 2}, 3000, true).start();  
-	    // }
-	    
+	    // 若节点出现故障
 	    if (alarmFlag) {
-	    	// console.log("该节点出现故障!!")
 	    	node.alarm ="warning";
             setInterval(function(){
                 if(node.alarm == 'warning'){
@@ -264,6 +257,7 @@ $(document).ready(function(){
 			}
 
 		}
+		$("#contextmenu").hide();
 	})
 
 	// 删除该节点及该节点下的所有节点与连线
@@ -311,6 +305,7 @@ $(document).ready(function(){
     	if (!linkArr.includes(text)) {
 		    linkArr.push(text);
 	        var link = new JTopo.Link(nodeA, nodeB, text);
+	        link.shadow = true;
 	        link.alpha =0.8;
 	        // link.arrowsRadius = 25; //箭头大小
 	        link.lineWidth = 10; // 线宽
@@ -369,7 +364,7 @@ $(document).ready(function(){
 						var animateNode = new JTopo.CircleNode();
 						animateNode.id =inLinks[j].nodeZ.id;
 						animateNode.serializedProperties.push("id");
-						animateNode.radius =3;
+						animateNode.radius =5;
 						animateNode.alpha =0.8;
 						animateNode.fillColor = "204, 240, 241";
 						animateNode.setLocation(inLinks[j].nodeA.getCenterLocation().x, inLinks[j].nodeA.getCenterLocation().y)

@@ -28,12 +28,36 @@ var dataList=[
 			"alarm": false
 		},
 		{
-			"id": 19,
+			"id": 25,
 			"parentId": 1,
-			"img": "img/set19.jpg",
-			"name": "设备19",
+			"img": "img/set25.jpg",
+			"name": "设备25",
 			"isRoot": false,
 			"alarm": false
+		},
+		{
+			"id": 27,
+			"parentId": 25,
+			"img": "img/set27.jpg",
+			"name": "设备27",
+			"isRoot": false,
+			"alarm": false
+		},
+		{
+			"id": 28,
+			"parentId": 25,
+			"img": "img/set28.jpg",
+			"name": "设备28",
+			"isRoot": false,
+			"alarm": false
+		},
+		{
+			"id": 26,
+			"parentId": 1,
+			"img": "img/set26.jpg",
+			"name": "设备26",
+			"isRoot": false,
+			"alarm": true
 		},
 		{
 			"id": 4,
@@ -154,5 +178,53 @@ var dataList=[
 			"name": "设备18",
 			"isRoot": false,
 			"alarm": true
+		},
+		{
+			"id": 19,
+			"parentId": 2,
+			"img": "img/set19.jpg",
+			"name": "设备19",
+			"isRoot": false,
+			"alarm": false
+		},
+		{
+			"id": 20,
+			"parentId": 2,
+			"img": "img/set20.jpg",
+			"name": "设备20",
+			"isRoot": false,
+			"alarm": true
+		},
+		{
+			"id": 21,
+			"parentId": 2,
+			"img": "img/set21.jpg",
+			"name": "设备21",
+			"isRoot": false,
+			"alarm": false
+		},
+		{
+			"id": 22,
+			"parentId": 20,
+			"img": "img/set22.jpg",
+			"name": "设备22",
+			"isRoot": false,
+			"alarm": true
+		},
+		{
+			"id": 23,
+			"parentId": 20,
+			"img": "img/set23.jpg",
+			"name": "设备23",
+			"isRoot": false,
+			"alarm": false
+		},
+		{
+			"id": 24,
+			"parentId": 22,
+			"img": "img/set24.jpg",
+			"name": "设备24",
+			"isRoot": false,
+			"alarm": false
 		}				
 ]
